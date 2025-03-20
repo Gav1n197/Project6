@@ -29,7 +29,9 @@ class MyApp(ShowBase):
         self.cTrav.addCollider(self.player.collisionNode, self.pusher)                  # allows player collider to be interacted with by other objects by pushing
         self.cTrav.showCollisions(self.render)
         self.player.collisionNode.reparentTo(self.player.modelNode)
-        self.render.ls()
+
+        #self.render.ls() ##Lists off the final version of the scene graph before making all of the drones
+
         fullCycle = 60
         for i in range(fullCycle):
             spaceJamClasses.Drone.droneCount += 1

@@ -6,10 +6,14 @@ from typing import Callable
 from panda3d.core import Loader, NodePath, Vec3, CollisionHandlerEvent
 from direct.interval.LerpInterval import LerpFunc
 from direct.particles.ParticleEffect import ParticleEffect
-
 import re # Regex module import for string editing.
-
 from CollideObjectBase import InverseSphereCollideObject, CapsuleCollidableObject, SphereCollidableObject, SphereCollidableObjectVec3 # type: ignore
+
+# --------------------------------------- Programmer controls ------------------------------------------|
+printMissileInfo = 0    # Enables terminal output of missile string info, keeps destruction messages    |
+printPosHprInfo = 0     # Enables terminal output of Pos and Hpr information of the model               |
+printReloads = 0        # Enables reload messages                                                       |
+# ------------------------------------------------------------------------------------------------------|
 
 class Player(SphereCollidableObjectVec3):
     def __init__(self, loader: Loader, taskMgr: TaskManager, accept: Callable[[str, Callable], None], modelPath: str, parentNode: NodePath, nodeName: str, posVec: Vec3, scaleVec: float, Hpr: Vec3, render, traverser):
@@ -183,10 +187,15 @@ class Player(SphereCollidableObjectVec3):
         return task.cont
 
     def printPosHpr(self):
-        print("renderPos: " + str(self.render.getPos()))
+        #print("renderPos: " + str(self.render.getPos()))
         #print("renderHPR: " + str(self.render.getHpr()))
-        print("modelPOS:  " + str(self.modelNode.getPos()))
-        #print("modelHPR:  " + str(self.modelNode.getHpr()))
+        Pattern = r'LVecBase3f'
+        
+        if printPosHprInfo == 1:
+            self.posRounded = (int(round(self.modelNode.getX(), 0)),int(round(self.modelNode.getY(), 0)), int(round(self.modelNode.getZ(), 0)))
+            print("modelPOS:  " + str(self.posRounded))
+            strippedHpr = re.sub(Pattern, '', str(self.modelNode.getHpr()))
+            print("modelHPR:  " + strippedHpr)
         return
 
     def fire(self):
@@ -215,10 +224,10 @@ class Player(SphereCollidableObjectVec3):
     def reload(self, task):
         if task.time > self.reloadTime:
             self.missileBay += 1
-            print("reload complete")
+            if printReloads == 1: print("reload complete")
             return Task.done
         elif task.time <= self.reloadTime:
-            #print("Still reloading!")
+            if printReloads == 1: print("Still reloading!")
             return Task.cont
         if self.missileBay > 1: # if the missiles ever glitch out
             self.missileBay = 1
@@ -226,27 +235,34 @@ class Player(SphereCollidableObjectVec3):
     
     def checkReload(self):
         if not self.taskMgr.hasTaskNamed('reload'):
-                print('Reloading')
+                if printReloads == 1: print('Reloading')
                 self.taskMgr.doMethodLater(0, self.reload, 'reload')
                 return Task.cont
 
     def handleInto(self, entry): # entry contains the collision information (name and pos of hit) (project6)
         fromNode = entry.getFromNodePath().getName()
-        print("fromNode:" + fromNode)
+        if printMissileInfo == 1: print("fromNode:" + fromNode)
+
         intoNode = entry.getIntoNodePath().getName()
-        print("intoNode:" + intoNode)
+        if printMissileInfo == 1: print("intoNode:" + intoNode)
+
         intoPosition = Vec3(entry.getSurfacePoint(self.render)) #logs where the into object was hit
 
         tempVar = fromNode.split('_')       # All of this makes variables out of the names of the strings, splitting where certain characters are
-        print("tempVar: " + str(tempVar))
+        if printMissileInfo == 1: print("tempVar: " + str(tempVar))
+
         shooter = tempVar[0]
-        print("Shooter: " + str(shooter))
+        if printMissileInfo == 1: print("Shooter: " + str(shooter))
+
         tempVar = intoNode.split('-')       # splits into an array at every -
-        print("tempVar1: " + str(tempVar))
+        if printMissileInfo == 1: print("tempVar1: " + str(tempVar))
+
         tempVar = intoNode.split('_')
-        print("tempVar2: " + str(tempVar))
+        if printMissileInfo == 1: print("tempVar2: " + str(tempVar))
+
         victim = tempVar[0]
-        print("Victim: " + str(victim))
+        if printMissileInfo == 1: print("Victim: " + str(victim))
+        
 
         pattern = r'[0-9]' # pattern to remove the numbers 0-9, uses Regex import
         strippedString = re.sub(pattern, '', victim) # replaces numbers with nothing, removes numbers from victim
@@ -273,7 +289,7 @@ class Player(SphereCollidableObjectVec3):
         self.explodeIntervals[tag].start()
 
     def explodeLight(self, t):
-        if t == 1.0 and self.explodeEffect:
+        if t == 1.4 and self.explodeEffect:
             self.explodeEffect.disable()
 
         elif t == 0:
@@ -283,7 +299,7 @@ class Player(SphereCollidableObjectVec3):
         base.enableParticles() # type: ignore
         self.explodeEffect = ParticleEffect()
         self.explodeEffect.loadConfig("Assets/ParticleEffects/basic_xpld_efx.ptf")
-        self.explodeEffect.setScale(20)
+        self.explodeEffect.setScale(30)
         self.explodeNode = self.render.attachNewNode('ExplosionEffects')
 
 class Universe(InverseSphereCollideObject):
@@ -317,7 +333,7 @@ class SpaceStation(CapsuleCollidableObject):
 
 class Planet(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, x: float, y: float, z: float, scaleVec: float):
-        super(Planet, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 1)
+        super(Planet, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 1.1)
         #self.modelNode = loader.loadModel(modelPath)
         #self.modelNode.reparentTo(parentNode)
 
@@ -331,7 +347,7 @@ class Planet(SphereCollidableObject):
 
 class Drone(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float): # type: ignore
-        super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 3)
+        super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 2)
         #self.modelNode = loader.loadModel(modelPath)
         #self.modelNode.reparentTo(parentNode)
 
@@ -352,14 +368,15 @@ class Missile(SphereCollidableObject):
     missileCount = 0
 
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, posVec: Vec3, scaleVec: float = 1.0): # type: ignore
-        super(Missile, self).__init__(loader, modelPath, parentNode, nodeName, posVec.getX(), posVec.getY(), posVec.getZ(), 3.0)
+        super(Missile, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 3.0)
         self.modelNode.setPos(posVec)
         self.modelNode.setScale(scaleVec)
+        print("Fire Missile #" + str(Missile.missileCount)) #Moved from below the .show() part below
         Missile.missileCount += 1
         
         Missile.fireModels[nodeName] = self.modelNode
         Missile.cNodes[nodeName] = self.collisionNode
         Missile.collisionSolids[nodeName] = self.collisionNode.node().getSolid(0)
         Missile.cNodes[nodeName].show()
-        print("Fire Missile #" + str(Missile.missileCount))
+        
         

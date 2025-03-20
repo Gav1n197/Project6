@@ -1,5 +1,10 @@
 from panda3d.core import PandaNode, Loader, NodePath, CollisionNode, CollisionSphere, CollisionInvSphere, CollisionCapsule, Vec3
 
+# --------------------------------------- Programmer controls ------------------------------------------|
+showCollide = 0 # Enables collider showing for planets, missiles, drones, and stations                  |
+# ------------------------------------------------------------------------------------------------------|
+
+
 class PlacedObject(PandaNode):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str):
         self.modelNode: NodePath = loader.loadModel(modelPath)
@@ -28,19 +33,21 @@ class CapsuleCollidableObject(CollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, ax: float, ay: float, az: float, bx: float, by: float, bz: float, r: float):
         super(CapsuleCollidableObject, self).__init__(loader, modelPath, parentNode, nodeName)
         self.collisionNode.node().addSolid(CollisionCapsule(ax, ay, az, bx, by, bz, r))
-        
-        self.collisionNode.show()
+        if showCollide == 1:
+            self.collisionNode.show()
 
 class SphereCollidableObject(CollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, x: float, y: float, z: float, r: float):
         super(SphereCollidableObject, self).__init__(loader, modelPath, parentNode, nodeName)
         self.collisionNode.node().addSolid(CollisionSphere(x, y, z, r))
 
-        self.collisionNode.show()
+        if showCollide == 1:
+            self.collisionNode.show()
 
 class SphereCollidableObjectVec3(CollidableObject): #Used specifically for the player and just uses a vector3 instead of individual xyz coords
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, colPositionVec: Vec3, r: float):
         super(SphereCollidableObjectVec3, self).__init__(loader, modelPath, parentNode, nodeName)
         self.collisionNode.node().addSolid(CollisionSphere(colPositionVec, r))
 
-        self.collisionNode.show()
+        if showCollide == 1:
+            self.collisionNode.show()
