@@ -36,7 +36,7 @@ class Player(SphereCollidableObjectVec3):
         self.traverser = traverser
         self.handler = CollisionHandlerEvent()
         self.handler.addInPattern('into')
-        self.accept('into', self.HandleInto)
+        self.accept('into', self.handleInto)
 
         self.setKeyBindings()
 
@@ -183,9 +183,10 @@ class Player(SphereCollidableObjectVec3):
 
     def printPosHpr(self):
         #print("renderPos: " + str(self.render.getPos()))
-        print("renderHPR: " + str(self.render.getHpr()))
+        #print("renderHPR: " + str(self.render.getHpr()))
         #print("modelPOS:  " + str(self.modelNode.getPos()))
-        print("modelHPR:  " + str(self.modelNode.getHpr()))
+        #print("modelHPR:  " + str(self.modelNode.getHpr()))
+        return
 
     def fire(self):
         if self.missileBay:
@@ -228,8 +229,61 @@ class Player(SphereCollidableObjectVec3):
                 self.taskMgr.doMethodLater(0, self.reload, 'reload')
                 return Task.cont
 
-    def handleInto(self, entry): # ebtry contains the collision information (name and pos of hit)
+    def handleInto(self, entry): # entry contains the collision information (name and pos of hit) (project6)
+        fromNode = entry.getFromNodePath().getName()
+        print("fromNode:" + fromNode)
+        intoNode = entry.getIntoNodePath().getName()
+        print("intoNode:" + intoNode)
+        intoPosition = Vec3(entry.getSurfacePoint(self.render)) #logs where the into object was hit
+
+        tempVar = fromNode.split('_')       # All of this makes variables out of the names of the strings, splitting where certain characters are
+        print("tempVar: " + str(tempVar))
+        shooter = tempVar[0]
+        print("Shooter: " + str(shooter))
+        tempVar = intoNode.split('-')       # splits into an array at every -
+        print("tempVar1: " + str(tempVar))
+        tempVar = intoNode.split('_')
+        print("tempVar2: " + str(tempVar))
+        victim = tempVar[0]
+        print("Victim: " + str(victim))
+
+        pattern = r'[0-9]' # pattern to remove the numbers 0-9, uses Regex import
+        strippedString = re.sub(pattern, '', victim) # replaces numbers with nothing, removes numbers from victim
+
+        if (strippedString == "Drone" or strippedString == "Planet" or strippedString == "SpaceStation"):
+            print(victim, ' hit at ', intoPosition)
+            self.destroyObject(victim, intoPosition)
         
+        print(shooter + " is destroyed")
+        Missile.Intervals[shooter].finish()
+
+    def destroyObject(self, hitID, hitPos):
+        nodeID = self.render.find(hitID)
+        nodeID.detachNode()
+
+        self.explodeNode.setPos(hitPos)
+        self.explode()
+    
+    def explode(self):
+        self.cntExplode += 1
+        tag = "particles-" + str(self.cntExplode)
+
+        self.explodeIntervals[tag] = LerpFunc(self.explodeLight, duration = 4.0)
+        self.explodeIntervals[tag].start()
+
+    def explodeLight(self, t):
+        if t == 1.0 and self.explodeEffect:
+            self.explodeEffect.disable()
+
+        elif t == 0:
+            self.explodeEffect.start(self.explodeNode)
+    
+    def SetParticles(self):
+        base.enableParticles()
+        self.explodeEffect = ParticleEffect()
+        self.explodeEffect.loadConfig("Assets/ParticleEffects/Explosions/basic_xpld_efx.ptf")
+        self.explodeEffect.setscale(20)
+        self.explodeNode = self.render.attachNewNode('ExplosionEffects')
 
 class Universe(InverseSphereCollideObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
@@ -258,20 +312,20 @@ class SpaceStation(CapsuleCollidableObject):
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
-        print("spacestation " + nodeName + " created")
+        #print("spacestation " + nodeName + " created")
 
 class Planet(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, x: float, y: float, z: float, scaleVec: float):
         super(Planet, self).__init__(loader, modelPath, parentNode, nodeName, x, y, z, scaleVec)
         #self.modelNode = loader.loadModel(modelPath)
-        self.modelNode.reparentTo(parentNode)
+        #self.modelNode.reparentTo(parentNode)
 
         self.modelNode.setX(x)
         self.modelNode.setY(y)
         self.modelNode.setZ(z)
         self.modelNode.setScale(scaleVec)
 
-        self.modelNode.setName(nodeName)
+        #self.modelNode.setName(nodeName)
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)

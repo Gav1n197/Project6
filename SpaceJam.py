@@ -45,16 +45,16 @@ class MyApp(ShowBase):
     def setupScene(self): ## snailCase for entire project
         self.universe = spaceJamClasses.Universe(self.loader, "Assets/Universe/Universe.x", self.render, "Universe", "Assets/Universe/Universe.jpg", (0,0,0), 10000)
 
-        self.planet1 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "planet1", "Assets/Planets/Textures/Mercury.jpg",        160,   5000, 1890, 320) 
-        self.planet2 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "planet2", "Assets/Planets/Textures/Moon.jpg",           400,   5400, 2270, 120) 
-        self.planet3 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "planet3", "Assets/Planets/Textures/WhitePlanet.jpg",   -2700,  6200, 1270, 150) 
-        self.planet4 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "planet4", "Assets/Planets/Textures/Neptune.jpg",       -2500,  6000, 970,  100) 
-        self.planet5 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "planet5", "Assets/Planets/Textures/Venus.jpg",          3000, -6000, 230,  350)
-        self.planet6 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "planet6", "Assets/Planets/Textures/GreyPlanet.jpg",    -3000, -6000, 730,  250) 
+        self.planet1 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet1", "Assets/Planets/Textures/Mercury.jpg",        160,   5000, 1890, 320) 
+        self.planet2 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet2", "Assets/Planets/Textures/Moon.jpg",           400,   5400, 2270, 120) 
+        self.planet3 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet3", "Assets/Planets/Textures/WhitePlanet.jpg",   -2700,  6200, 1270, 150) 
+        self.planet4 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet4", "Assets/Planets/Textures/Neptune.jpg",       -2500,  6000, 970,  100) 
+        self.planet5 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet5", "Assets/Planets/Textures/Venus.jpg",          3000, -6000, 230,  350)
+        self.planet6 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet6", "Assets/Planets/Textures/GreyPlanet.jpg",    -3000, -6000, 730,  250) 
 
-        self.player = spaceJamClasses.Player(self.loader, self.taskMgr, self.accept, "Assets/Spaceships/Dumbledore/Dumbledore.x", self.render, "player", (0, 0, 0), 1, (0, 0, 0), self.render, self.cTrav)
+        self.player = spaceJamClasses.Player(self.loader, self.taskMgr, self.accept, "Assets/Spaceships/Dumbledore/Dumbledore.x", self.render, "Player", (0, 0, 0), 1, (0, 0, 0), self.render, self.cTrav)
         
-        self.spaceStation1 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "spaceStation1", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (0, 270, 0), 2) 
+        self.spaceStation1 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "SpaceStation1", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (0, 570, 0), 5) 
 
     def drawBaseballSeams(self, centralObject, droneName, step, numSeams, radius = 1):
         unitVec = defensePaths.BaseballSeams(step, numSeams, B = 0.4)
