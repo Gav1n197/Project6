@@ -2,8 +2,11 @@
 ## Comments on column 89
 ## All file names and folder names are capitalized (Assets/Planets/Textures/WhitePlanet.png)
 
-## Fix spacestation size (too small)
-## Fix planet collision and drone collision, also make sure player cannot exit the universe
+## ToDo:
+## HUD element to show ammo indicator and show when the rocket can fire again, it would flash.
+## Add sun to game for lighting.
+## Maybe fix the bug that crashes the game when shooting colliding missiles at certain angles (not sure what the problem is)
+## Fix drone health being high somehow??? (maybe bad collider or multiple drones in one spot?)
 
 import math, sys, random
 from direct.showbase.ShowBase import ShowBase 
@@ -56,6 +59,7 @@ class MyApp(ShowBase):
         self.planet6 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet6", "Assets/Planets/Textures/GreyPlanet.jpg",    -3000, -6000, 730,  250) 
         
         self.spaceStation1 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "SpaceStation1", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (0, 570, 0), 5) 
+        self.spaceStation2 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "SpaceStation2", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (740, 0, 0), 6) 
 
         self.player = spaceJamClasses.Player(self.loader, self.taskMgr, self.accept, "Assets/Spaceships/Dumbledore/Dumbledore.x", self.render, "Player", (0, 0, 0), 1, (0, 0, 0), self.render, self.cTrav)
     
@@ -96,7 +100,7 @@ class MyApp(ShowBase):
         self.camera.setHpr(0, 0, 0)
     
     def enableHUD(self):
-        self.Hud = OnscreenImage(image = "Assets/Hud/crosshair3.png", pos = Vec3(0,0,0), scale = 0.4)
+        self.Hud = OnscreenImage(image = "Assets/Hud/crosshair4.png", pos = Vec3(0,0,0), scale = 0.4)
         self.Hud.setTransparency(TransparencyAttrib.MAlpha)
 
     def quit(self):

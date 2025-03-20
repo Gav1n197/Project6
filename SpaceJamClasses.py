@@ -271,7 +271,7 @@ class Player(SphereCollidableObjectVec3):
             print(victim, ' hit at ', intoPosition)
             self.destroyObject(victim, intoPosition)
         
-        print(shooter + " is destroyed")
+        if printMissileInfo == 1: print(shooter + " is destroyed")
         Missile.Intervals[shooter].finish()
 
     def destroyObject(self, hitID, hitPos):
@@ -285,11 +285,11 @@ class Player(SphereCollidableObjectVec3):
         self.cntExplode += 1
         tag = "particles-" + str(self.cntExplode)
 
-        self.explodeIntervals[tag] = LerpFunc(self.explodeLight, duration = 4.0)
+        self.explodeIntervals[tag] = LerpFunc(self.explodeLight, duration = 2.0) # 2.0 was 4.0, set to 2 so it wouldn't explode twice
         self.explodeIntervals[tag].start()
 
     def explodeLight(self, t):
-        if t == 1.4 and self.explodeEffect:
+        if t == 1.0 and self.explodeEffect:
             self.explodeEffect.disable()
 
         elif t == 0:
@@ -318,7 +318,7 @@ class Universe(InverseSphereCollideObject):
 
 class SpaceStation(CapsuleCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
-        super(SpaceStation, self).__init__(loader, modelPath, parentNode, nodeName, 3, 1, 3, -9, 4, -9, 7)     ##Defines ax, ay, az, etc. for capsule
+        super(SpaceStation, self).__init__(loader, modelPath, parentNode, nodeName, 3, 1, 3, -9, -4, -9, 7)     ##Defines ax, ay, az, etc. for capsule
         #self.modelNode = loader.loadModel(modelPath)
         #self.modelNode.reparentTo(parentNode)
 
