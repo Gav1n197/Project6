@@ -38,6 +38,7 @@ class Player(SphereCollidableObjectVec3):
         self.handler.addInPattern('into')
         self.accept('into', self.handleInto)
 
+        self.SetParticles()
         self.setKeyBindings()
 
         self.taskMgr.add(self.checkIntervals, 'checkMissiles', 34)
@@ -281,8 +282,8 @@ class Player(SphereCollidableObjectVec3):
     def SetParticles(self):
         base.enableParticles()
         self.explodeEffect = ParticleEffect()
-        self.explodeEffect.loadConfig("Assets/ParticleEffects/Explosions/basic_xpld_efx.ptf")
-        self.explodeEffect.setscale(20)
+        self.explodeEffect.loadConfig("Assets/ParticleEffects/basic_xpld_efx.ptf")
+        #self.explodeEffect.setscale(20)
         self.explodeNode = self.render.attachNewNode('ExplosionEffects')
 
 class Universe(InverseSphereCollideObject):
@@ -318,14 +319,14 @@ class Planet(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, x: float, y: float, z: float, scaleVec: float):
         super(Planet, self).__init__(loader, modelPath, parentNode, nodeName, x, y, z, scaleVec)
         #self.modelNode = loader.loadModel(modelPath)
-        #self.modelNode.reparentTo(parentNode)
+        self.modelNode.reparentTo(parentNode)
 
         self.modelNode.setX(x)
         self.modelNode.setY(y)
         self.modelNode.setZ(z)
         self.modelNode.setScale(scaleVec)
 
-        #self.modelNode.setName(nodeName)
+        self.modelNode.setName(nodeName)
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
