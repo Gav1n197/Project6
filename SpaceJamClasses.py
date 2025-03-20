@@ -64,7 +64,7 @@ class Player(SphereCollidableObjectVec3):
             self.taskMgr.remove('forward-thrust')
 
     def applyThrust(self, task):
-        rate = 5
+        rate = 15
         trajectory = self.render.getRelativeVector(self.modelNode, Vec3.forward())
         trajectory.normalize()
         self.modelNode.setFluidPos(self.modelNode.getPos() + trajectory * rate)
@@ -183,9 +183,9 @@ class Player(SphereCollidableObjectVec3):
         return task.cont
 
     def printPosHpr(self):
-        #print("renderPos: " + str(self.render.getPos()))
+        print("renderPos: " + str(self.render.getPos()))
         #print("renderHPR: " + str(self.render.getHpr()))
-        #print("modelPOS:  " + str(self.modelNode.getPos()))
+        print("modelPOS:  " + str(self.modelNode.getPos()))
         #print("modelHPR:  " + str(self.modelNode.getHpr()))
         return
 
@@ -280,22 +280,22 @@ class Player(SphereCollidableObjectVec3):
             self.explodeEffect.start(self.explodeNode)
     
     def SetParticles(self):
-        base.enableParticles()
+        base.enableParticles() # type: ignore
         self.explodeEffect = ParticleEffect()
         self.explodeEffect.loadConfig("Assets/ParticleEffects/basic_xpld_efx.ptf")
-        #self.explodeEffect.setscale(20)
+        self.explodeEffect.setScale(20)
         self.explodeNode = self.render.attachNewNode('ExplosionEffects')
 
 class Universe(InverseSphereCollideObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
-        super(Universe, self).__init__(loader, modelPath, parentNode, nodeName, posVec, 9600) ##Uses __init__ function from InverseSphereCollideObject
+        super(Universe, self).__init__(loader, modelPath, parentNode, nodeName, posVec, 0.9) ##Uses __init__ function from InverseSphereCollideObject
         #self.modelNode = loader.loadModel(modelPath)
-        self.modelNode.reparentTo(parentNode)
+        #self.modelNode.reparentTo(parentNode)
 
         self.modelNode.setPos(posVec)
         self.modelNode.setScale(scaleVec)
 
-        self.modelNode.setName(nodeName)
+        #self.modelNode.setName(nodeName)
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
@@ -304,12 +304,12 @@ class SpaceStation(CapsuleCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
         super(SpaceStation, self).__init__(loader, modelPath, parentNode, nodeName, 1, -1, 5, 1, -1, -5, 7)     ##Defines ax, ay, az, etc. for capsule
         #self.modelNode = loader.loadModel(modelPath)
-        self.modelNode.reparentTo(parentNode)
+        #self.modelNode.reparentTo(parentNode)
 
         self.modelNode.setPos(posVec)
         self.modelNode.setScale(scaleVec)
 
-        self.modelNode.setName(nodeName)
+        #self.modelNode.setName(nodeName)
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
@@ -317,30 +317,28 @@ class SpaceStation(CapsuleCollidableObject):
 
 class Planet(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, x: float, y: float, z: float, scaleVec: float):
-        super(Planet, self).__init__(loader, modelPath, parentNode, nodeName, x, y, z, scaleVec)
+        super(Planet, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 1)
         #self.modelNode = loader.loadModel(modelPath)
-        self.modelNode.reparentTo(parentNode)
+        #self.modelNode.reparentTo(parentNode)
 
-        self.modelNode.setX(x)
-        self.modelNode.setY(y)
-        self.modelNode.setZ(z)
+        self.modelNode.setPos(x,y,z)
         self.modelNode.setScale(scaleVec)
 
-        self.modelNode.setName(nodeName)
+        #self.modelNode.setName(nodeName)
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
 
 class Drone(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float): # type: ignore
-        super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, posVec.getX(), posVec.getY(), posVec.getZ(), scaleVec)
+        super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, posVec.getX(), posVec.getY(), posVec.getZ(), 1)
         #self.modelNode = loader.loadModel(modelPath)
-        self.modelNode.reparentTo(parentNode)
+        #self.modelNode.reparentTo(parentNode)
 
         self.modelNode.setPos(posVec)
         self.modelNode.setScale(scaleVec)
 
-        self.modelNode.setName(nodeName)
+        #self.modelNode.setName(nodeName)
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
@@ -355,8 +353,8 @@ class Missile(SphereCollidableObject):
 
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, posVec: Vec3, scaleVec: float = 1.0): # type: ignore
         super(Missile, self).__init__(loader, modelPath, parentNode, nodeName, posVec.getX(), posVec.getY(), posVec.getZ(), 3.0)
-        self.modelNode.setScale(scaleVec)
         self.modelNode.setPos(posVec)
+        self.modelNode.setScale(scaleVec)
         Missile.missileCount += 1
         
         Missile.fireModels[nodeName] = self.modelNode
