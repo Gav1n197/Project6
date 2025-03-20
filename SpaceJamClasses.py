@@ -318,7 +318,7 @@ class Universe(InverseSphereCollideObject):
 
 class SpaceStation(CapsuleCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
-        super(SpaceStation, self).__init__(loader, modelPath, parentNode, nodeName, 1, -1, 5, 1, -1, -5, 7)     ##Defines ax, ay, az, etc. for capsule
+        super(SpaceStation, self).__init__(loader, modelPath, parentNode, nodeName, 3, 1, 3, -9, 4, -9, 7)     ##Defines ax, ay, az, etc. for capsule
         #self.modelNode = loader.loadModel(modelPath)
         #self.modelNode.reparentTo(parentNode)
 
