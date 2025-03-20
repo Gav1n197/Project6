@@ -331,7 +331,7 @@ class Planet(SphereCollidableObject):
 
 class Drone(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float): # type: ignore
-        super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, posVec.getX(), posVec.getY(), posVec.getZ(), 1)
+        super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 3)
         #self.modelNode = loader.loadModel(modelPath)
         #self.modelNode.reparentTo(parentNode)
 
