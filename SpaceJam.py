@@ -41,13 +41,11 @@ class MyApp(ShowBase):
             nickName = "Drone" + str(spaceJamClasses.Drone.droneCount)  ##Concantenation of nicknames for each drone made
 
             self.drawCloudDefense(self.planet1, nickName)
-            self.drawBaseballSeams(self.spaceStation1, nickName, i, fullCycle, 2)
+            self.drawBaseballSeams(self.sun, nickName, i, fullCycle, 2)
             self.drawCircleX(self.planet3, nickName, i, fullCycle, 225)
             self.drawCircleY(self.planet4, nickName, i, fullCycle, 175)
             self.drawCircleZ(self.planet5, nickName, i, fullCycle, 425)
             
-        
-
     def setupScene(self): ## snailCase for entire project
         self.universe = spaceJamClasses.Universe(self.loader, "Assets/Universe/Universe.x", self.render, "Universe", "Assets/Universe/Universe.jpg", (0,0,0), 10000)
 
@@ -58,7 +56,9 @@ class MyApp(ShowBase):
         self.planet5 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet5", "Assets/Planets/Textures/Venus.jpg",          3000, -6000, 230,  350)
         self.planet6 = spaceJamClasses.Planet(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Planet6", "Assets/Planets/Textures/GreyPlanet.jpg",    -3000, -6000, 730,  250) 
         
-        self.spaceStation1 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "SpaceStation1", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (0, 570, 0), 5) 
+        self.sun     = spaceJamClasses.Sun(self.loader, "Assets/Planets/protoPlanet.x", self.render, "Sun", "Assets/Planets/Textures/Sun.jpg",            0,  2000,   0,  400, self.render) 
+
+        self.spaceStation1 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "SpaceStation1", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (200, -570, 0), 5) 
         self.spaceStation2 = spaceJamClasses.SpaceStation(self.loader, "Assets/SpaceStation/SpaceStation1B/spaceStation.x", self.render, "SpaceStation2", "Assets/SpaceStation/SpaceStation1B/SpaceStation1_Dif2.png", (740, 0, 0), 6) 
 
         self.player = spaceJamClasses.Player(self.loader, self.taskMgr, self.accept, "Assets/Spaceships/Dumbledore/Dumbledore.x", self.render, "Player", (0, 0, 0), 1, (0, 0, 0), self.render, self.cTrav)

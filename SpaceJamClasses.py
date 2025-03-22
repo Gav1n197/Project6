@@ -3,7 +3,8 @@ from panda3d.core import *
 from direct.task import Task
 from direct.task.Task import TaskManager
 from typing import Callable
-from panda3d.core import Loader, NodePath, Vec3, CollisionHandlerEvent
+from panda3d.core import *
+from panda3d.core import Loader, NodePath, Vec3, CollisionHandlerEvent, Material
 from direct.interval.LerpInterval import LerpFunc
 from direct.particles.ParticleEffect import ParticleEffect
 import re # Regex module import for string editing.
@@ -239,7 +240,7 @@ class Player(SphereCollidableObjectVec3):
                 self.taskMgr.doMethodLater(0, self.reload, 'reload')
                 return Task.cont
 
-    def handleInto(self, entry): # entry contains the collision information (name and pos of hit) (project6)
+    def handleInto(self, entry): # entry contains the collision information (name and pos of hit) also decides which objects are to be destroyed (project6)
         fromNode = entry.getFromNodePath().getName()
         if printMissileInfo == 1: print("fromNode:" + fromNode)
 
@@ -267,7 +268,7 @@ class Player(SphereCollidableObjectVec3):
         pattern = r'[0-9]' # pattern to remove the numbers 0-9, uses Regex import
         strippedString = re.sub(pattern, '', victim) # replaces numbers with nothing, removes numbers from victim
 
-        if (strippedString == "Drone" or strippedString == "Planet" or strippedString == "SpaceStation"):
+        if (strippedString == "Drone" or strippedString == "Planet" or strippedString == "SpaceStation"): #Excludes the sun and the universe
             print(victim, ' hit at ', intoPosition)
             self.destroyObject(victim, intoPosition)
         
@@ -344,7 +345,7 @@ class Planet(SphereCollidableObject):
 
         tex = loader.loadTexture(texPath)
         self.modelNode.setTexture(tex, 1)
-
+        
 class Drone(SphereCollidableObject):
     def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float): # type: ignore
         super(Drone, self).__init__(loader, modelPath, parentNode, nodeName, 0, 0, 0, 2)
@@ -379,4 +380,27 @@ class Missile(SphereCollidableObject):
         Missile.collisionSolids[nodeName] = self.collisionNode.node().getSolid(0)
         Missile.cNodes[nodeName].show()
         
+class Sun(Planet):
+    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, x: float, y: float, z: float, scaleVec: float, render):
+        super(Sun, self).__init__(loader, modelPath, parentNode, nodeName, texPath, x, y, z, scaleVec)
+        
+        self.sunTemp = 5772                             # 5772 is the temperature of our sun (kelvin)
+        self.sunNode = loader.loadModel(modelPath)
+        
+        self.setLight(render, x, y, z)
+        self.setMaterial()
+        
+
+    def setLight(self, render, x, y, z):
+        sunLight = PointLight('sunLight')               # type: ignore
+        sunLight.setColorTemperature(self.sunTemp)
+        sunLightNode = render.attachNewNode(sunLight)
+        #sunLightNode.attenuation(0, 0, 1)              # Strength of light
+        sunLightNode.setPos(x, y, z)
+        render.setLight(sunLightNode)
+    
+    def setMaterial(self):
+        sunMat = Material()
+        sunMat.setEmission((0,1000,0,1))
+        self.sunNode.setMaterial(sunMat)
         
